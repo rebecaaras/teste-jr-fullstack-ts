@@ -9,7 +9,7 @@ export enum Weekday {
   saturday = 6,
 }
 
-type Time = {
+export type Time = {
   hours: number;
   minutes: number;
 };
