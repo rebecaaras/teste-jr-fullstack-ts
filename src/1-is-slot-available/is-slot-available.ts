@@ -1,33 +1,39 @@
-import { addMinutes, getDay, getHours, set, toDate } from 'date-fns';
+import { addMinutes, areIntervalsOverlapping, getDay, setHours, setMinutes } from 'date-fns';
 import { CalendarAvailability, CalendarSlot } from '../types';
 import { Weekday, Time } from '../types';
 
+/**Verifies if the slot of the event is an available time in schedule. */
 export const isSlotAvailable = (availability: CalendarAvailability, slot: CalendarSlot): boolean => {
-  //types
   type Workday = {
     weekday: Weekday;
     range: [Time, Time];
-}
+  }
 
-  //variables
   const doctorSchedule = availability.include;
-  const eventDate = slot.start
-  const eventWeekday: Weekday = getDay(eventDate) 
+  const eventStartTime = slot.start 
+  const eventEndTime = addMinutes(eventStartTime, slot.durationM)
   
-  /** Check if day of event is available*/
-  function isDayAvailable(): boolean {
-    return doctorSchedule.some(workday => workday.weekday === eventWeekday)
+  // Check if day of event is available
+  const workday: Workday | undefined =  doctorSchedule.find(workday => workday.weekday === getDay(eventStartTime))
+  if (!workday){
+    console.log('This day is not available in the schedule')
+    return false
   }
   
-  function availableScheduleDay(): Workday | undefined {
-    return doctorSchedule.find((workday) => {
-      workday.range[0].hours <= getHours(eventDate)
-      console.log(workday);
-    })};
-    
-  if (isDayAvailable()){
-    console.log(availableScheduleDay())
-  }
+  //convert schedule interval available in event day to Date
+  let workdayStartTime: Date = setHours(eventStartTime, workday.range[0].hours)
+  workdayStartTime = setMinutes(workdayStartTime, workday.range[0].minutes)
+  // console.log(`Workday starts at: ${workdayStartTime}`)
 
-  return false
+  let workdayEndTime: Date = setHours(eventStartTime, workday.range[1].hours)
+  workdayEndTime = setMinutes(workdayEndTime, workday.range[1].minutes)
+  // console.log(`Workday ends at: ${workdayEndTime}`)
+
+  // console.log(`Event starts at ${eventStartTime} and ends at ${eventEndTime}`)
+  console.log(setHours.name)
+  const result:boolean =  areIntervalsOverlapping({start: workdayStartTime, end: workdayEndTime},
+                          {start: eventStartTime, end: eventEndTime})
+  
+  // console.log(`This slot is available? ${result}`)
+  return result
 };
