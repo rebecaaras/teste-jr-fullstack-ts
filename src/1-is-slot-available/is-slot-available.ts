@@ -23,17 +23,13 @@ export const isSlotAvailable = (availability: CalendarAvailability, slot: Calend
   //convert schedule interval available in event day to Date
   let workdayStartTime: Date = setHours(eventStartTime, workday.range[0].hours)
   workdayStartTime = setMinutes(workdayStartTime, workday.range[0].minutes)
-  // console.log(`Workday starts at: ${workdayStartTime}`)
 
   let workdayEndTime: Date = setHours(eventStartTime, workday.range[1].hours)
   workdayEndTime = setMinutes(workdayEndTime, workday.range[1].minutes)
-  // console.log(`Workday ends at: ${workdayEndTime}`)
 
-  // console.log(`Event starts at ${eventStartTime} and ends at ${eventEndTime}`)
   console.log(setHours.name)
   const result:boolean =  areIntervalsOverlapping({start: workdayStartTime, end: workdayEndTime},
                           {start: eventStartTime, end: eventEndTime})
   
-  // console.log(`This slot is available? ${result}`)
   return result
 };
