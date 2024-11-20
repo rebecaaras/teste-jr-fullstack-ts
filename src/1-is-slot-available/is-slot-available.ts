@@ -1,4 +1,4 @@
-import { addMinutes, areIntervalsOverlapping, getDay, setHours, setMinutes } from 'date-fns';
+import { addMinutes, getDay, isWithinInterval, setHours, setMinutes } from 'date-fns';
 import { CalendarAvailability, CalendarSlot } from '../types';
 import { Weekday, Time } from '../types';
 
@@ -9,27 +9,27 @@ export const isSlotAvailable = (availability: CalendarAvailability, slot: Calend
     range: [Time, Time];
   }
 
-  const doctorSchedule = availability.include;
-  const eventStartTime = slot.start 
-  const eventEndTime = addMinutes(eventStartTime, slot.durationM)
+  const doctorSchedule: Workday[] = availability.include;
+  const eventStartTime: Date = slot.start
+  const eventEndTime: Date = addMinutes(eventStartTime, slot.durationM)
   
-  // Check if day of event is available
   const workday: Workday | undefined =  doctorSchedule.find(workday => workday.weekday === getDay(eventStartTime))
   if (!workday){
-    console.log('This day is not available in the schedule')
     return false
-  }
-  
-  //convert schedule interval available in event day to Date
+  } 
+
+  //convert workday interval available to Date
   let workdayStartTime: Date = setHours(eventStartTime, workday.range[0].hours)
   workdayStartTime = setMinutes(workdayStartTime, workday.range[0].minutes)
 
   let workdayEndTime: Date = setHours(eventStartTime, workday.range[1].hours)
   workdayEndTime = setMinutes(workdayEndTime, workday.range[1].minutes)
-
-  console.log(setHours.name)
-  const result:boolean =  areIntervalsOverlapping({start: workdayStartTime, end: workdayEndTime},
-                          {start: eventStartTime, end: eventEndTime})
   
-  return result
+  if (isWithinInterval(eventStartTime, {start: workdayStartTime, end: workdayEndTime}) 
+    && (isWithinInterval(eventEndTime, {start: workdayStartTime, end: workdayEndTime}))){
+      return true
+  } else {
+    return false
+  }
+
 };
