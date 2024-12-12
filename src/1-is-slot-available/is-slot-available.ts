@@ -1,13 +1,9 @@
 import { addMinutes, getDay, isWithinInterval, setHours, setMinutes } from 'date-fns';
-import { CalendarAvailability, CalendarSlot } from '../types';
+import { CalendarAvailability, CalendarSlot, Workday } from '../types';
 import { Weekday, Time } from '../types';
 
 /**Verifies if the slot of the event is an available time in schedule. */
 export const isSlotAvailable = (availability: CalendarAvailability, slot: CalendarSlot): boolean => {
-  type Workday = {
-    weekday: Weekday;
-    range: [Time, Time];
-  }
 
   const doctorSchedule: Workday[] = availability.include;
   const eventStartTime: Date = slot.start
