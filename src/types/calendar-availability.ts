@@ -20,3 +20,9 @@ export type CalendarAvailability = {
     range: [Time, Time];
   }>;
 };
+
+/**An element of CalendarAvailability.include*/
+export type Workday = {
+  weekday: Weekday;
+  range: [Time, Time];
+}
